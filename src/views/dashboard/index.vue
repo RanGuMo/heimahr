@@ -1,6 +1,12 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-text">name: {{ name }}</div>
+    <!-- 使用svg-icon组件 -->
+    <!-- 设置icon-class 属性="文件名称（没有后缀）" -->
+    <svg-icon icon-class="dashboard"></svg-icon>
+    <svg-icon icon-class="example"></svg-icon>
+    <svg-icon icon-class="password"></svg-icon>
+    <svg-icon icon-class="skill"></svg-icon>
   </div>
 </template>
 
