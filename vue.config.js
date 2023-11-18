@@ -36,7 +36,12 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    proxy: {
+      '/api': { // 如果请求的url 有/api 就会走下面的代理服务器，从而实现 解决跨域
+        target: 'https://heimahr.itheima.net'
+      }
+    },
+    // before: require('./mock/mock-server.js')  // 基础模板做的模拟数据，会拦截请求，需要注释掉
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
