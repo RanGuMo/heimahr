@@ -1,4 +1,5 @@
-import { getToken,setToken,removeToken } from "@/utils/auth"
+import { getToken, setToken, removeToken } from "@/utils/auth"
+import { login } from "@/api/user"
 const state = {
   token: getToken() // 1.从缓存中读取初始值
 }
@@ -17,8 +18,9 @@ const actions = {
   async login(context, data) {
     console.log(data)
     // todo: 调用登录接口
-    // 返回一个token 123456
-    context.commit('setToken', 123456)
+    const token = await login(data)
+    // 返回一个token 
+    context.commit('setToken', token)
   },
 }
 export default {

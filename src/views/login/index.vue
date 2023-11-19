@@ -7,94 +7,115 @@
         <!--登录表单-->
         <el-form ref="form" :model="loginForm" :rules="loginRules">
           <el-form-item prop="mobile">
-            <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
+            <el-input
+              v-model="loginForm.mobile"
+              placeholder="请输入手机号"
+            ></el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input show-password v-model="loginForm.password" placeholder="请输入密码"></el-input>
+            <el-input
+              show-password
+              v-model="loginForm.password"
+              placeholder="请输入密码"
+            ></el-input>
           </el-form-item>
           <el-form-item prop="isAgree">
-            <el-checkbox v-model="loginForm.isAgree">用户平台使用协议</el-checkbox>
+            <el-checkbox v-model="loginForm.isAgree"
+              >用户平台使用协议</el-checkbox
+            >
           </el-form-item>
           <el-form-item>
-            <el-button @click="login" type="primary" style="width:350px">登录</el-button>
+            <el-button @click="login" type="primary" style="width: 350px"
+              >登录</el-button
+            >
           </el-form-item>
-          <el-button @click="testAxios">测试axios封装</el-button>
+          <!-- <el-button @click="testAxios">测试axios封装</el-button> -->
         </el-form>
       </el-card>
     </div>
   </div>
 </template>
 <script>
-import request from '@/utils/request'
+import request from "@/utils/request";
 export default {
   name: "Login",
   data() {
     return {
       loginForm: {
-        mobile: '',
-        password: '',
-        isAgree: false
+        mobile: process.env.NODE_ENV === "development" ? "13800000002" : "",
+        password: process.env.NODE_ENV === "development" ? "hm#qd@23!" : "",
+        // isAgree: process.env.NODE_ENV === "development" ? true : false,
+        isAgree: process.env.NODE_ENV === "development", // 简写
       },
       loginRules: {
-        mobile: [{
-          required: true,
-          message: '请输入手机号',
-          trigger: 'blur'
-        }, {
-          pattern: /^1[3-9]\d{9}$/,
-          message: '手机号格式不正确',
-          trigger: 'blur'
-
-        }],
-        password: [{
-          required: true,
-          message: '请输入密码',
-          trigger: 'blur'
-        }, {
-          min: 6,
-          max: 16,
-          message: '密码长度应该为6-16位之间',
-          trigger: 'blur'
-
-        }],
+        mobile: [
+          {
+            required: true,
+            message: "请输入手机号",
+            trigger: "blur",
+          },
+          {
+            pattern: /^1[3-9]\d{9}$/,
+            message: "手机号格式不正确",
+            trigger: "blur",
+          },
+        ],
+        password: [
+          {
+            required: true,
+            message: "请输入密码",
+            trigger: "blur",
+          },
+          {
+            min: 6,
+            max: 16,
+            message: "密码长度应该为6-16位之间",
+            trigger: "blur",
+          },
+        ],
         // required只能检查 null "" undefined,不能检查 true 或false 所以需要使用自定义校验validator
-        isAgree: [{
-          validator: (rule, value, callback) => {
-            // rule规则
-            // value检查的数据 true/false
-            // callback 函数 执行这个函数
-            // 成功执行callback  失败执行callback(错误对象 new Error(错误信息))
-            value ? callback() : callback(new Error('您没有勾选用户平台协议'))
-          }
-        }]
-      }
-    }
+        isAgree: [
+          {
+            validator: (rule, value, callback) => {
+              // rule规则
+              // value检查的数据 true/false
+              // callback 函数 执行这个函数
+              // 成功执行callback  失败执行callback(错误对象 new Error(错误信息))
+              value
+                ? callback()
+                : callback(new Error("您没有勾选用户平台协议"));
+            },
+          },
+        ],
+      },
+    };
   },
-  created() {
-    alert(process.env.NODE_ENV)
-  },
+  // created() {
+  //   alert(process.env.NODE_ENV)
+  // },
   methods: {
     login() {
-      this.$refs.form.validate((isOK) => {
+      this.$refs.form.validate(async (isOK) => {
         if (isOK) {
           // alert('校验通过')
-          this.$store.dispatch("user/login", this.loginForm)
+          // Vuex中的action 返回的是promise
+          await this.$store.dispatch("user/login", this.loginForm);
+          this.$router.push("/"); //跳转到主页
         }
-      })
+      });
     },
-    testAxios() {
-      request({
-        url: '/sys/login',
-        method: 'post',
-        data: {
-          mobile: "13912345678",
-          password: "123456"
-        }
-      })
-    }
-  }
-}
-
+    // testAxios() {
+    //   request({
+    //     url: '/sys/login',
+    //     method: 'post',
+    //     data: {
+    //       mobile: "13800000002",
+    //       password: "hm#qd@23!"
+    //     }
+    //   })
+    // }
+  },
+};
 </script>
 <style lang="scss">
 .login-container {
@@ -148,7 +169,7 @@ export default {
       }
     }
     .el-checkbox {
-      color:#606266;
+      color: #606266;
     }
   }
 }
