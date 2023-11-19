@@ -18,12 +18,14 @@
           <el-form-item>
             <el-button @click="login" type="primary" style="width:350px">登录</el-button>
           </el-form-item>
+          <el-button @click="testAxios">测试axios封装</el-button>
         </el-form>
       </el-card>
     </div>
   </div>
 </template>
 <script>
+import request from '@/utils/request'
 export default {
   name: "Login",
   data() {
@@ -74,6 +76,16 @@ export default {
         if (isOK) {
           // alert('校验通过')
           this.$store.dispatch("user/login", this.loginForm)
+        }
+      })
+    },
+    testAxios() {
+      request({
+        url: '/sys/login',
+        method: 'post',
+        data: {
+          mobile: "13912345678",
+          password: "123456"
         }
       })
     }
