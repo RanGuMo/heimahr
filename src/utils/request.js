@@ -5,7 +5,8 @@ import { getToken } from '@/utils/auth'
 
 // 创建一个axios 实例
 const service = axios.create({
-  baseURL: '/api', // url = base url + request url
+  // baseURL: '/api', // url = base url + request url
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   timeout: 10000 // 请求超时时间设置为10秒
 })
 
