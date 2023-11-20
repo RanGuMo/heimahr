@@ -2,6 +2,7 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import router from '@/router'
 
 // 创建一个axios 实例
 const service = axios.create({
@@ -43,7 +44,18 @@ service.interceptors.response.use(
     }
 
   },
-  error => {
+  async (error) => {
+    if (error.response.status === 401) { //说明token超时，或者失效了
+      Message.warning('登录已过期，请重新登录')
+      await store.dispatch('user/logout') // 调用action 退出登录
+      //主动跳转到登录页
+      router.push('/login') // 跳转登录页
+
+      return Promise.reject(error)
+    }
+
+
+
     Message({
       message: error.message,
       type: 'error',

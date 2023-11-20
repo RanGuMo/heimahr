@@ -29,6 +29,11 @@ const actions = {
   async getUserInfo(context) {
     const userInfo = await getUserInfo()
     context.commit('setUserInfo', userInfo)
+  },
+  //退出登录
+  logout(context) {
+    context.commit('removeToken') // 删除token
+    context.commit('setUserInfo', {}) // 设置用户信息为空对象
   }
 }
 export default {
