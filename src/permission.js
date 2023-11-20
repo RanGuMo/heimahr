@@ -23,6 +23,10 @@ router.beforeEach(async (to, from, next) => {
       next({ path: '/' }) // 如果已经登录，中转到主页
       NProgress.done() // next(地址) 并不会执行后置守卫，所以需要 手动处理进度条
     } else {
+      //  判断是否获取过用户信息
+      if (!store.getters.userInfo) { //如果vuex没有用户信息，就再次获取
+        await store.dispatch('user/getUserInfo')
+      }
       next() //放行
     }
   } else {

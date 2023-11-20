@@ -20,9 +20,10 @@ export default {
       'name'
     ])
   },
-  created() {
-    this.$store.dispatch('user/getUserInfo')
-  }
+  // created() {
+  //   // 获取用户信息
+  //   this.$store.dispatch('user/getUserInfo')
+  // }
 }
 </script>
 
