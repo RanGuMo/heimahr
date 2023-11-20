@@ -8,7 +8,9 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <!-- 头像 -->
-          <img :src="avatar" class="user-avatar">
+          <img v-if="avatar" :src="avatar" class="user-avatar">
+          <!--  name.chartAt(0) 表示取第一个字 -->
+          <span v-else class="username">{{ name?.chartAt(0) }}</span>
           <!-- 用户名称 -->
           <span class="name">{{ name }}</span>
           <!-- ”设置“ 图标 -->
@@ -128,6 +130,15 @@ export default {
           margin-left: 10px;
           margin-right:15px;//用户名距离右侧的距离
           font-size: 16px;
+        }
+        .username{
+          width: 30px;
+          height: 30px;
+          line-height: 30px;
+          text-align: center;
+          background-color: #04c9be;
+          color:#fff;
+          border-radius: 50%;
         }
         .user-avatar {
           cursor: pointer;
