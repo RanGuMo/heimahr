@@ -48,6 +48,7 @@
       title="修改密码"
       :visible.sync="showDialog"
       @close="btnCancel"
+      :modal-append-to-body="false"
     >
       <!-- 放置表单 -->
       <el-form
