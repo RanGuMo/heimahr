@@ -3,7 +3,8 @@
     <div class="app-container">
       <!-- 组织架构   -->
       <!-- 展示树形结构 default-expand-all 默认展开 -->
-      <el-tree default-expand-all :data="depts" :props="defaultProps">
+      <!-- :expand-on-click-node="false"  点击 节点行 不能关闭，必须点击折叠图标才行 -->
+      <el-tree :expand-on-click-node="false" default-expand-all :data="depts" :props="defaultProps">
         <!-- 节点结构 -->
         <template v-slot="{ node, data }">
           <el-row
@@ -15,16 +16,16 @@
             <el-col>{{ data.name }} </el-col>
             <el-col :span="4">
               <span class="tree-manager">{{ data.managerName }}</span>
-              <el-dropdown>
+              <el-dropdown @command="operateDept">
                 <!-- 显示区域内容 -->
                 <span class="el-dropdown-link">
                   操作<i class="el-icon-arrow-down el-icon--right" />
                 </span>
                 <!-- 下拉菜单选项 -->
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>添加子部门</el-dropdown-item>
-                  <el-dropdown-item>编辑部门</el-dropdown-item>
-                  <el-dropdown-item>删除</el-dropdown-item>
+                  <el-dropdown-item command="add">添加子部门</el-dropdown-item>
+                  <el-dropdown-item command="edit">编辑部门</el-dropdown-item>
+                  <el-dropdown-item command="del">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
@@ -32,14 +33,19 @@
         </template>
       </el-tree>
     </div>
+    <!--  -->
+    <add-dept  :show-dialog.sync="showDialog"  />
   </div>
 </template>
 
 <script>
 import { getDepartment } from "@/api/department";
 import { transListToTreeData } from "@/utils";
+import AddDept from "./components/add-dept.vue";
+
 export default {
   name: "Department",
+  components: { AddDept },
   data() {
     return {
       depts: [],
@@ -58,6 +64,7 @@ export default {
         children: "children", //读取子节点的字段名
         label: "name", //要显示的字段的名字
       },
+      showDialog: false, //控制弹出层的显示与隐藏
     };
   },
   created() {
@@ -67,8 +74,14 @@ export default {
     // 1.获取部门信息
     async getDepartment() {
       const result = await getDepartment();
-      this.depts = transListToTreeData(result,0);
+      this.depts = transListToTreeData(result, 0);
     },
+    // 2.点击部门节点 下拉项
+    operateDept(type) {
+      if(type === 'add') {
+        this.showDialog = true
+      }
+    }
   },
 };
 </script>
