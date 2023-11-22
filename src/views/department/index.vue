@@ -36,7 +36,8 @@
 </template>
 
 <script>
-import { getDepartment } from '@/api/department'
+import { getDepartment } from "@/api/department";
+import { transListToTreeData } from "@/utils";
 export default {
   name: "Department",
   data() {
@@ -66,7 +67,7 @@ export default {
     // 1.获取部门信息
     async getDepartment() {
       const result = await getDepartment();
-      this.depts = result;
+      this.depts = transListToTreeData(result,0);
     },
   },
 };
