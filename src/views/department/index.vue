@@ -36,26 +36,38 @@
 </template>
 
 <script>
+import { getDepartment } from '@/api/department'
 export default {
   name: "Department",
   data() {
     return {
-      depts: [
-        {
-          name: "传智教育",
-          managerName: "管理员",
-          children: [
-            { name: "总裁办", managerName: "张三" },
-            { name: "行政部", managerName: "李四" },
-            { name: "财务部", managerName: "王五" },
-          ],
-        },
-      ],
+      depts: [],
+      // depts: [
+      //   {
+      //     name: "传智教育",
+      //     managerName: "管理员",
+      //     children: [
+      //       { name: "总裁办", managerName: "张三" },
+      //       { name: "行政部", managerName: "李四" },
+      //       { name: "财务部", managerName: "王五" },
+      //     ],
+      //   },
+      // ],
       defaultProps: {
         children: "children", //读取子节点的字段名
         label: "name", //要显示的字段的名字
       },
     };
+  },
+  created() {
+    this.getDepartment();
+  },
+  methods: {
+    // 1.获取部门信息
+    async getDepartment() {
+      const result = await getDepartment();
+      this.depts = result;
+    },
   },
 };
 </script>
@@ -69,6 +81,6 @@ export default {
 .tree-manager {
   width: 50px;
   display: inline-block;
-  margin: 10px;
+  margin-right: 35px;
 }
 </style>
