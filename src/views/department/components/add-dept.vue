@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="新增部门" :visible="showDialog" @close="close">
     <!-- 表单结构 -->
-    <el-form :model="formData" :rules="rules" label-width="120px">
+    <el-form ref="addDept" :model="formData" :rules="rules" label-width="120px">
       <el-form-item prop="name" label="部门名称">
         <el-input
           v-model="formData.name"
@@ -48,8 +48,8 @@
         <!-- 按钮 -->
         <el-row type="flex" justify="center">
           <el-col :span="12">
-            <el-button size="mini" type="primary">确定</el-button>
-            <el-button size="mini">取消</el-button>
+            <el-button size="mini" type="primary" @click="btnOK">确定</el-button>
+            <el-button size="mini" @click="close">取消</el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -57,7 +57,7 @@
   </el-dialog>
 </template>
 <script>
-import { getDepartment, getManagerList } from "@/api/department";
+import { getDepartment, getManagerList,addDepartment } from "@/api/department";
 export default {
   name: "AddDept",
   props: {
@@ -148,11 +148,25 @@ export default {
   },
   methods: {
     close() {
-      this.$emit("update:showDialog", false);
+      this.$refs.addDept.resetFields(); //重置表单
+      this.$emit("update:showDialog", false); // 关闭弹窗
     },
     // 获取部门负责人列表
     async getManagerList() {
       this.managerList = await getManagerList();
+    },
+    // 点击确定时调用
+    btnOK() {
+      this.$refs.addDept.validate(async isOK => {
+        if (isOK) {
+          await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          // 通知父组件更新
+          this.$emit('updateDepartment')
+          // 提示消息
+          this.$message.success(`新增部门成功`)
+          this.close()
+        }
+      })
     },
   },
 };
