@@ -65,6 +65,7 @@ export default {
         label: "name", //要显示的字段的名字
       },
       showDialog: false, //控制弹出层的显示与隐藏
+      
     };
   },
   created() {
