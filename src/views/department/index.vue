@@ -16,7 +16,7 @@
             <el-col>{{ data.name }} </el-col>
             <el-col :span="4">
               <span class="tree-manager">{{ data.managerName }}</span>
-              <el-dropdown @command="operateDept">
+              <el-dropdown @command="operateDept($event, data.id)">
                 <!-- 显示区域内容 -->
                 <span class="el-dropdown-link">
                   操作<i class="el-icon-arrow-down el-icon--right" />
@@ -34,7 +34,7 @@
       </el-tree>
     </div>
     <!--  -->
-    <add-dept  :show-dialog.sync="showDialog"  />
+    <add-dept  :currentNodeId="currentNodeId" :show-dialog.sync="showDialog"  />
   </div>
 </template>
 
@@ -48,6 +48,7 @@ export default {
   components: { AddDept },
   data() {
     return {
+      currentNodeId:null, //记录当前点击节点的id
       depts: [],
       // depts: [
       //   {
@@ -65,7 +66,7 @@ export default {
         label: "name", //要显示的字段的名字
       },
       showDialog: false, //控制弹出层的显示与隐藏
-      
+
     };
   },
   created() {
@@ -78,9 +79,10 @@ export default {
       this.depts = transListToTreeData(result, 0);
     },
     // 2.点击部门节点 下拉项
-    operateDept(type) {
+    operateDept(type,id) {
       if(type === 'add') {
         this.showDialog = true
+        this.currentNodeId = id
       }
     }
   },
