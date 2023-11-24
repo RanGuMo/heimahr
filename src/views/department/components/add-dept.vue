@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="新增部门" :visible="showDialog" @close="close">
+  <el-dialog :title="showTitle" :visible="showDialog" @close="close">
     <!-- 表单结构 -->
     <el-form ref="addDept" :model="formData" :rules="rules" label-width="120px">
       <el-form-item prop="name" label="部门名称">
@@ -48,7 +48,9 @@
         <!-- 按钮 -->
         <el-row type="flex" justify="center">
           <el-col :span="12">
-            <el-button size="mini" type="primary" @click="btnOK">确定</el-button>
+            <el-button size="mini" type="primary" @click="btnOK"
+              >确定</el-button
+            >
             <el-button size="mini" @click="close">取消</el-button>
           </el-col>
         </el-row>
@@ -57,7 +59,13 @@
   </el-dialog>
 </template>
 <script>
-import { getDepartment, getManagerList,addDepartment,getDepartmentDetail } from "@/api/department";
+import {
+  getDepartment,
+  getManagerList,
+  addDepartment,
+  getDepartmentDetail,
+  updateDepartment
+} from "@/api/department";
 export default {
   name: "AddDept",
   props: {
@@ -67,8 +75,8 @@ export default {
     },
     currentNodeId: {
       type: Number,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
@@ -94,10 +102,10 @@ export default {
             validator: async (rule, value, callback) => {
               // value就是输入的编码
               let result = await getDepartment();
-               // 判断是否是编辑模式 (编辑模式下的校验，需要排除自身，再进行校验)
-               if (this.formData.id) {
+              // 判断是否是编辑模式 (编辑模式下的校验，需要排除自身，再进行校验)
+              if (this.formData.id) {
                 // 编辑场景
-                result = result.filter(item => item.id !== this.formData.id)
+                result = result.filter((item) => item.id !== this.formData.id);
               }
               // result数组中是否存在 value值
               if (result.some((item) => item.code === value)) {
@@ -134,10 +142,10 @@ export default {
             validator: async (rule, value, callback) => {
               // value就是输入的编码
               let result = await getDepartment();
-               // 判断是否是编辑模式 (编辑模式下的校验，需要排除自身，再进行校验)
-               if (this.formData.id) {
+              // 判断是否是编辑模式 (编辑模式下的校验，需要排除自身，再进行校验)
+              if (this.formData.id) {
                 // 编辑场景
-                result = result.filter(item => item.id !== this.formData.id)
+                result = result.filter((item) => item.id !== this.formData.id);
               }
               // result数组中是否存在 value值
               if (result.some((item) => item.name === value)) {
@@ -156,8 +164,21 @@ export default {
   created() {
     this.getManagerList();
   },
+  computed: {
+    showTitle() {
+      return this.formData.id ? '编辑部门' : '新增部门'
+    }
+  },
   methods: {
     close() {
+      this.formData = {
+        code: "", // 部门编码
+        introduce: "", // 部门介绍
+        managerId: "", // 部门负责人id
+        name: "", // 部门名称
+        pid: "", // 父级部门的id
+      };
+      // resetFields 只能重置在模板中绑定的数据
       this.$refs.addDept.resetFields(); //重置表单
       this.$emit("update:showDialog", false); // 关闭弹窗
     },
@@ -167,21 +188,31 @@ export default {
     },
     // 点击确定时调用
     btnOK() {
-      this.$refs.addDept.validate(async isOK => {
+      this.$refs.addDept.validate(async (isOK) => {
         if (isOK) {
-          await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          let msg = "新增";
+          // 通过formData中id
+          if (this.formData.id) {
+            // 编辑场景
+            msg = "更新";
+            await updateDepartment(this.formData);
+          } else {
+            // 新增场景
+            await addDepartment({ ...this.formData, pid: this.currentNodeId });
+          }
+
           // 通知父组件更新
-          this.$emit('updateDepartment')
+          this.$emit("updateDepartment");
           // 提示消息
-          this.$message.success(`新增部门成功`)
-          this.close()
+          this.$message.success(`${msg}部门成功`);
+          this.close();
         }
-      })
+      });
     },
-     // 获取组织的详情
-     async getDepartmentDetail() {
-      this.formData = await getDepartmentDetail(this.currentNodeId)
-    }
+    // 获取组织的详情
+    async getDepartmentDetail() {
+      this.formData = await getDepartmentDetail(this.currentNodeId);
+    },
   },
 };
 </script>
