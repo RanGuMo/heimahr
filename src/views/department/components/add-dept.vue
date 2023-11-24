@@ -57,7 +57,7 @@
   </el-dialog>
 </template>
 <script>
-import { getDepartment, getManagerList,addDepartment } from "@/api/department";
+import { getDepartment, getManagerList,addDepartment,getDepartmentDetail } from "@/api/department";
 export default {
   name: "AddDept",
   props: {
@@ -94,6 +94,11 @@ export default {
             validator: async (rule, value, callback) => {
               // value就是输入的编码
               let result = await getDepartment();
+               // 判断是否是编辑模式 (编辑模式下的校验，需要排除自身，再进行校验)
+               if (this.formData.id) {
+                // 编辑场景
+                result = result.filter(item => item.id !== this.formData.id)
+              }
               // result数组中是否存在 value值
               if (result.some((item) => item.code === value)) {
                 callback(new Error("部门中已经有该编码了"));
@@ -129,6 +134,11 @@ export default {
             validator: async (rule, value, callback) => {
               // value就是输入的编码
               let result = await getDepartment();
+               // 判断是否是编辑模式 (编辑模式下的校验，需要排除自身，再进行校验)
+               if (this.formData.id) {
+                // 编辑场景
+                result = result.filter(item => item.id !== this.formData.id)
+              }
               // result数组中是否存在 value值
               if (result.some((item) => item.name === value)) {
                 callback(new Error("部门中已经有该名称了"));
@@ -168,6 +178,10 @@ export default {
         }
       })
     },
+     // 获取组织的详情
+     async getDepartmentDetail() {
+      this.formData = await getDepartmentDetail(this.currentNodeId)
+    }
   },
 };
 </script>
