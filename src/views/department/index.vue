@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { getDepartment } from "@/api/department";
+import { getDepartment,delDepartment } from "@/api/department";
 import { transListToTreeData } from "@/utils";
 import AddDept from "./components/add-dept.vue";
 
@@ -104,6 +104,14 @@ export default {
         this.$nextTick(() => { //3.所以需要使用nextTick 保证 showDialog 渲染完成（即更新props完毕）
            // 2.直接调用了子组件的方法 是同步的方法
           this.$refs.addDept.getDepartmentDetail() // this.$refs.addDept等同于子组件的this
+        })
+      } else {
+         // 删除部门
+         this.$confirm('您确认要删除该部门吗').then(async() => {
+          await delDepartment(id)
+          // 提示消息
+          this.$message.success('删除部门成功')
+          this.getDepartment()
         })
       }
     },
