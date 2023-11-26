@@ -3,7 +3,9 @@
     <div class="app-container">
       <!-- 角色管理内容 -->
       <div class="role-operate">
-        <el-button size="mini" type="primary" @click="showDialog=true">添加角色</el-button>
+        <el-button size="mini" type="primary" @click="showDialog = true"
+          >添加角色</el-button
+        >
       </div>
       <!-- 放置table组件 -->
       <el-table :data="list">
@@ -42,21 +44,32 @@
         />
       </el-row>
     </div>
-    <el-dialog width="500px" title="新增角色" :visible.sync="showDialog">
+    <el-dialog @close="btnCancel" width="500px" title="新增角色" :visible.sync="showDialog">
       <!-- 表单内容 -->
-      <el-form label-width="120px" ref="roleForm" :model="roleForm" :rules="rules">
+      <el-form
+        label-width="120px"
+        ref="roleForm"
+        :model="roleForm"
+        :rules="rules"
+      >
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="roleForm.name" style="width: 300px" size="mini" />
         </el-form-item>
-        <el-form-item label="启用">
-         <!-- 如果不需要校验 就不需要写 prop属性 -->
-         <!-- :active-value="1" 启用为 数字1  加:表示数字  不加表示字符串 active-value="1" （值为字符串1）-->
-         <!-- :inactive-value="0" 未启用为 数字0 -->
-         <el-switch v-model="roleForm.state" :active-value="1" :inactive-value="0" size="mini" />
+        <el-form-item label="启用" prop="state">
+          <!-- 2.重置表单数据，需要绑定 prop属性 -->
+          <!-- 1.如果不需要校验 就不需要写 prop属性 -->
+          <!-- :active-value="1" 启用为 数字1  加:表示数字  不加表示字符串 active-value="1" （值为字符串1）-->
+          <!-- :inactive-value="0" 未启用为 数字0 -->
+          <el-switch
+            v-model="roleForm.state"
+            :active-value="1"
+            :inactive-value="0"
+            size="mini"
+          />
         </el-form-item>
         <el-form-item label="角色描述" prop="description">
           <el-input
-          v-model="roleForm.description"
+            v-model="roleForm.description"
             type="textarea"
             :rows="3"
             style="width: 300px"
@@ -66,8 +79,8 @@
         <el-form-item>
           <el-row type="flex" justify="center">
             <el-col :span="12">
-              <el-button type="primary" size="mini">确定</el-button>
-              <el-button size="mini">取消</el-button>
+              <el-button type="primary" size="mini" @click="btnOK">确定</el-button>
+              <el-button size="mini" @click="btnCancel">取消</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -76,7 +89,7 @@
   </div>
 </template>
 <script>
-import { getRoleList } from "@/api/role";
+import { getRoleList,addRole } from "@/api/role";
 import role from "@/router/modules/role";
 export default {
   name: "Role",
@@ -90,14 +103,18 @@ export default {
         total: 0,
       },
       roleForm: {
-        name: '',
-        description: '',
-        state: 0 // 默认未启用0   关闭 0 打开1
+        name: "",
+        description: "",
+        state: 0, // 默认未启用0   关闭 0 打开1
       },
       rules: {
-        name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }],
-        description: [{ required: true, message: '角色描述不能为空', trigger: 'blur' }]
-      }
+        name: [
+          { required: true, message: "角色名称不能为空", trigger: "blur" },
+        ],
+        description: [
+          { required: true, message: "角色描述不能为空", trigger: "blur" },
+        ],
+      },
     };
   },
   created() {
@@ -114,6 +131,21 @@ export default {
     changePage(newPage) {
       this.pageParams.page = newPage; // 赋值当前页码
       this.getRoleList();
+    },
+
+    btnOK() {
+      this.$refs.roleForm.validate(async (isOK) => {
+        if (isOK) {
+          await addRole(this.roleForm);
+          this.$message.success("新增角色成功");
+          this.getRoleList();
+          this.btnCancel();
+        }
+      });
+    },
+    btnCancel() {
+      this.$refs.roleForm.resetFields(); // 重置表单数据
+      this.showDialog = false; // 关闭弹层
     },
   },
 };
