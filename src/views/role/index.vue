@@ -3,7 +3,7 @@
     <div class="app-container">
       <!-- 角色管理内容 -->
       <div class="role-operate">
-        <el-button size="mini" type="primary">添加角色</el-button>
+        <el-button size="mini" type="primary" @click="showDialog=true">添加角色</el-button>
       </div>
       <!-- 放置table组件 -->
       <el-table :data="list">
@@ -37,11 +37,38 @@
           layout="prev, pager, next"
           :page-size="pageParams.pagesize"
           :current-page="pageParams.page"
-          :total = "pageParams.total"
+          :total="pageParams.total"
           @current-change="changePage"
         />
       </el-row>
     </div>
+    <el-dialog width="500px" title="新增角色" :visible.sync="showDialog">
+      <!-- 表单内容 -->
+      <el-form label-width="120px">
+        <el-form-item label="角色名称">
+          <el-input style="width: 300px" size="mini" />
+        </el-form-item>
+        <el-form-item label="启用">
+          <el-switch size="mini" />
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input
+            type="textarea"
+            :rows="3"
+            style="width: 300px"
+            size="mini"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-row type="flex" justify="center">
+            <el-col :span="12">
+              <el-button type="primary" size="mini">确定</el-button>
+              <el-button size="mini">取消</el-button>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -50,6 +77,7 @@ export default {
   name: "Role",
   data() {
     return {
+      showDialog: false, //控制弹出层的显示和隐藏
       list: [],
       pageParams: {
         page: 1, // 第几页
@@ -64,15 +92,15 @@ export default {
   methods: {
     // 1.角色管理-获取数据
     async getRoleList() {
-      const { rows,total } = await getRoleList(this.pageParams);
+      const { rows, total } = await getRoleList(this.pageParams);
       this.list = rows; // 赋值数据
-      this.pageParams.total = total
+      this.pageParams.total = total;
     },
-    // 切换分页时 请求新的数据    
+    // 切换分页时 请求新的数据
     changePage(newPage) {
-      this.pageParams.page = newPage // 赋值当前页码      
-      this.getRoleList()
-    }
+      this.pageParams.page = newPage; // 赋值当前页码
+      this.getRoleList();
+    },
   },
 };
 </script>
