@@ -40,7 +40,12 @@
         </el-table-column>
         <el-table-column prop="description" align="center" label="描述">
           <template v-slot="{ row }">
-            <el-input v-if="row.isEdit" v-model="row.editRow.description" size="mini" type="textarea"  />
+            <el-input
+              v-if="row.isEdit"
+              v-model="row.editRow.description"
+              size="mini"
+              type="textarea"
+            />
             <span v-else>{{ row.description }}</span>
           </template>
         </el-table-column>
@@ -49,8 +54,8 @@
           <template v-slot="{ row }">
             <template v-if="row.isEdit">
               <!-- 编辑状态 -->
-              <el-button type="primary" size="mini">确定</el-button>
-              <el-button size="mini">取消</el-button>
+              <el-button type="primary" size="mini" @click="btnEditOK(row)">确定</el-button>
+              <el-button size="mini" @click="row.isEdit = false">取消</el-button>
             </template>
             <template v-else>
               <!-- 非编辑状态 -->
@@ -128,7 +133,7 @@
   </div>
 </template>
 <script>
-import { getRoleList, addRole } from "@/api/role";
+import { getRoleList, addRole,updateRole } from "@/api/role";
 import role from "@/router/modules/role";
 export default {
   name: "Role",
@@ -208,6 +213,24 @@ export default {
       row.editRow.name = row.name;
       row.editRow.state = row.state;
       row.editRow.description = row.description;
+    },
+    // 点击确定时触发
+    async btnEditOK(row) {
+      if (row.editRow.name && row.editRow.description) {
+        // 下一步操作
+        await updateRole({ ...row.editRow, id: row.id });
+        // 更新成功
+        this.$message.success("更新角色成功");
+        // 更新显示数据  退出编辑状态
+        // row.name = row.editRow.name // eslint的校验 误判
+        // Object.assign(target, source)
+        Object.assign(row, {
+          ...row.editRow,
+          isEdit: false, // 退出编辑模式
+        }); // 规避eslint的误判
+      } else {
+        this.$message.warning("角色或者角色描述不能为空");
+      }
     },
   },
 };
