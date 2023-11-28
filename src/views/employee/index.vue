@@ -2,8 +2,21 @@
   <div class="container">
     <div class="app-container">
       <div class="left">
-        <el-input style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" />
-        <!-- 树形组件 -->
+        <el-input
+          style="margin-bottom: 10px"
+          type="text"
+          prefix-icon="el-icon-search"
+          size="small"
+          placeholder="输入员工姓名全员搜索"
+        />
+        <!-- 树形组件  highlight-current 高亮显示-->
+        <el-tree
+          :data="depts"
+          :props="defaultProps"
+          default-expand-all
+          :expand-on-click-node="false"
+          highlight-current
+        />
       </div>
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
@@ -19,9 +32,30 @@
 </template>
 
 <script>
+import { getDepartment } from '@/api/department'
+import { transListToTreeData } from '@/utils'
 export default {
-  name: 'Employee'
-}
+  name: "Employee",
+  data() {
+    return {
+      depts: [], // 组织数据
+      defaultProps: {
+        label: "name",
+        children: "children",
+      },
+    };
+  },
+  created() {
+    this.getDepartment();
+  },
+  methods: {
+    async getDepartment() {
+      // 递归方法 将列表转化成树形
+      // let result = await getDepartment()
+      this.depts = transListToTreeData(await getDepartment(), 0);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -37,7 +71,7 @@ export default {
     flex: 1;
     padding: 20px;
     .opeate-tools {
-      margin:10px ;
+      margin: 10px;
     }
     .username {
       height: 30px;
@@ -46,11 +80,10 @@ export default {
       text-align: center;
       border-radius: 50%;
       color: #fff;
-      background: #04C9BE;
+      background: #04c9be;
       font-size: 12px;
-      display:inline-block;
+      display: inline-block;
     }
   }
 }
-
 </style>
