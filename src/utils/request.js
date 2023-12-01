@@ -8,7 +8,8 @@ import router from '@/router'
 const service = axios.create({
   // baseURL: '/api', // url = base url + request url
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  timeout: 10000 // 请求超时时间设置为10秒
+  // timeout: 10000 // 请求超时时间设置为10秒
+  timeout: 100000 // 请求超时时间设置为100秒 （防止导出excel接口请求时间过长导致取消请求）
 })
 
 // 请求拦截器
