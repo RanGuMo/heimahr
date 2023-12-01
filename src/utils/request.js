@@ -31,6 +31,8 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     // aixos 默认包裹了data，所以需要从response.data 取出
+    // 判断是不是Blob
+    if (response.data instanceof Blob) return response.data // 返回了Blob对象
     const { data, message, success } = response.data
     if (success) {
       return data
