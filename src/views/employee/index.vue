@@ -76,7 +76,7 @@
       </div>
     </div>
     <!-- 放置导入组件 -->
-    <import-excel :show-excel-dialog.sync="showExcelDialog" />
+    <import-excel :show-excel-dialog.sync="showExcelDialog" @uploadSuccess="getEmployeeList" />
   </div>
 </template>
 
