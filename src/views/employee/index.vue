@@ -27,7 +27,9 @@
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
           <el-button size="mini" type="primary">添加员工</el-button>
-          <el-button size="mini" @click="showExcelDialog = true">excel导入</el-button>
+          <el-button size="mini" @click="showExcelDialog = true"
+            >excel导入</el-button
+          >
           <el-button size="mini" @click="exportEmployee">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
@@ -55,10 +57,21 @@
           <el-table-column prop="departmentName" label="部门" />
           <el-table-column prop="timeOfEntry" label="入职时间" sortable />
           <el-table-column label="操作" width="280px">
-            <template>
+            <template v-slot="{row}">
               <el-button size="mini" type="text">查看</el-button>
               <el-button size="mini" type="text">角色</el-button>
-              <el-button size="mini" type="text">删除</el-button>
+              <el-popconfirm
+                title="确认删除该行数据吗？"
+                @onConfirm="confirmDel(row.id)"
+              >
+                <el-button
+                  slot="reference"
+                  style="margin-left: 10px"
+                  size="mini"
+                  type="text"
+                  >删除</el-button
+                >
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -76,21 +89,24 @@
       </div>
     </div>
     <!-- 放置导入组件 -->
-    <import-excel :show-excel-dialog.sync="showExcelDialog" @uploadSuccess="getEmployeeList" />
+    <import-excel
+      :show-excel-dialog.sync="showExcelDialog"
+      @uploadSuccess="getEmployeeList"
+    />
   </div>
 </template>
 
 <script>
 import { getDepartment } from "@/api/department";
 import { transListToTreeData } from "@/utils";
-import { getEmployeeList, exportEmployee } from "@/api/employee";
+import { getEmployeeList, exportEmployee, delEmployee } from "@/api/employee";
 import FileSaver from "file-saver"; //blob流 下载文件
-import ImportExcel from './components/import-excel.vue'
+import ImportExcel from "./components/import-excel.vue";
 
 export default {
   name: "Employee",
   components: {
-    ImportExcel
+    ImportExcel,
   },
   data() {
     return {
@@ -162,6 +178,13 @@ export default {
       // FileSaver.saveAs(blob对象,文件名称)
       FileSaver.saveAs(result, "员工信息表.xlsx"); // 下载文件
     },
+    // 删除员工方法
+    async confirmDel(id) {
+      await delEmployee(id)
+      if (this.list.length === 1 && this.queryParams.page > 1) this.queryParams.page--
+      this.getEmployeeList()
+      this.$message.success('删除员工成功')
+    }
   },
 };
 </script>
