@@ -248,7 +248,8 @@ export default {
       await delRole(id) // 后端删除
       this.$message.success('删除角色成功')
       // 删除的如果是最后一个，让当前页码减一(注意！！！，list指的是当前页面的数据，不是所有的数据)
-      if (this.list.length === 1) this.pageParams.page--
+      // 并且当前页数要大于1
+      if (this.list.length === 1 && this.pageParams.page > 1) this.pageParams.page--
       this.getRoleList() // 重新获取数据
 }
   },
