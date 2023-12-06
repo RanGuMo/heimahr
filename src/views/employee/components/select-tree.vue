@@ -12,6 +12,8 @@
 <script>
 import { getDepartment } from "@/api/department";
 import { transListToTreeData } from "@/utils";
+
+
 export default {
   props: {
     value: {
