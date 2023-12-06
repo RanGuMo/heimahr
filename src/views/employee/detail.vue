@@ -39,6 +39,7 @@
             <el-col :span="12">
               <el-form-item label="手机" prop="mobile">
                 <el-input
+                  :disabled="!!$route.params.id"
                   v-model="userInfo.mobile"
                   size="mini"
                   class="inputW"
@@ -117,11 +118,11 @@
 </template>
 
 <script>
-import SelectTree from "./components/select-tree.vue"
-import { addEmployee,getEmployeeDetail } from "@/api/employee";
+import SelectTree from "./components/select-tree.vue";
+import { addEmployee, getEmployeeDetail, updateEmployee } from "@/api/employee";
 export default {
   components: {
-    SelectTree
+    SelectTree,
   },
   data() {
     return {
@@ -181,17 +182,25 @@ export default {
   created() {
     // 如何获取路由参数的中id => this.$route.params.id
     // if (this.$route.params.id) { this.getEmployeeDetail() }
-    this.$route.params.id && this.getEmployeeDetail()
+    this.$route.params.id && this.getEmployeeDetail();
   },
   methods: {
     async getEmployeeDetail() {
-      this.userInfo = await getEmployeeDetail(this.$route.params.id)
+      this.userInfo = await getEmployeeDetail(this.$route.params.id);
     },
     saveData() {
-      this.$refs.userForm.validate(async isOK => {
+      this.$refs.userForm.validate(async (isOK) => {
         if (isOK) {
-          await addEmployee(this.userInfo)
-          this.$message.success("新增员工成功");
+          // 校验通过
+          if (this.$route.params.id) {
+            // 编辑模式
+            await updateEmployee(this.userInfo);
+            this.$message.success("更新员工成功");
+          } else {
+            // 新增模式
+            await addEmployee(this.userInfo);
+            this.$message.success("新增员工成功");
+          }
           this.$router.push("/employee");
         }
       });
