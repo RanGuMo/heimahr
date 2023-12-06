@@ -51,7 +51,7 @@
               <el-form-item label="部门" prop="departmentId">
                 <!-- 放置及联部门组件 会单独封装-->
                 <!-- inputW样式会给到selectTree中 template第一层的组件 -->
-                <select-tree class="inputW" />
+                <select-tree v-model="userInfo.departmentId" class="inputW" />
               </el-form-item>
             </el-col>
           </el-row>
