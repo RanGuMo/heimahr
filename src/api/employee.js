@@ -19,6 +19,7 @@ export function getEmployeeList(params) {
 export function exportEmployee() {
   return request({
     url: '/sys/user/export',
+    timeout:100000, //单独设置请求超时时间
     // 改变接收数据的类型
     responseType: 'blob' // 使用blob接收二进制文件流
   })
@@ -31,6 +32,7 @@ export function exportEmployee() {
 export function getExportTemplate() {
   return request({
     url: '/sys/user/import/template',
+    timeout:100000, //单独设置请求超时时间
     responseType: 'blob' // 二进制文件流
   })
 }
