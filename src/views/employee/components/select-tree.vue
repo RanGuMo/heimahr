@@ -1,13 +1,6 @@
 <template>
   <!-- element-ui级联组件 -->
-  <el-cascader
-    :value="value"
-    size="mini"
-    :options="treeData"
-    :props="props"
-    separator="-"
-    @change="changeValue"
-  />
+  <el-cascader :value="value" size="mini" :options="treeData" :props="props" separator="-" @change="changeValue" />
 </template>
 <script>
 import { getDepartment } from "@/api/department";
@@ -27,6 +20,7 @@ export default {
       props: {
         label: "name", // 要展示的字段
         value: "id", // 要存储的字段
+        checkStrictly: true //通过 props.checkStrictly = true 来设置父子节点取消选中关联，从而达到选择任意一级选项的目的。
       },
     };
   },
