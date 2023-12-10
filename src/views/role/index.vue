@@ -150,8 +150,10 @@
 
     <!-- 放置权限弹层 -->
     <el-dialog :visible.sync="showPermissionDialog" title="分配权限">
-      <!-- 放置权限数据 -->
+      <!-- 放置权限数据  check-strictly 父子不关联-->
       <el-tree
+        ref="permTree"
+        check-strictly
         node-key="id"
         :data="permissionData"
         :props="{ label: 'name' }"
@@ -159,8 +161,17 @@
         default-expand-all
         :default-checked-keys="permIds"
       />
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button type="primary" size="mini" @click="btnPermissionOK"
+            >确定</el-button
+          >
+          <el-button size="mini" @click="showPermissionDialog = false"
+            >取消</el-button
+          >
+        </el-col>
+      </el-row>
     </el-dialog>
-
   </div>
 </template>
 <script>
@@ -170,6 +181,7 @@ import {
   updateRole,
   delRole,
   getRoleDetail,
+  assignPerm,
 } from "@/api/role";
 import role from "@/router/modules/role";
 import { getPermissionList } from "@/api/permission";
@@ -291,6 +303,15 @@ export default {
       this.permIds = permIds;
       this.permissionData = transListToTreeData(await getPermissionList(), 0);
       this.showPermissionDialog = true;
+    },
+    // 点击确定时触发
+    async btnPermissionOK() {
+      await assignPerm({
+        id: this.currentRoleId,
+        permIds: this.$refs.permTree.getCheckedKeys(),
+      });
+      this.$message.success("角色分配权限成功");
+      this.showPermissionDialog = false;
     },
   },
 };
