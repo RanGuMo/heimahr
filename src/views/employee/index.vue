@@ -26,7 +26,12 @@
       </div>
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
-          <el-button size="mini" type="primary" @click="$router.push('/employee/detail')">添加员工</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="$router.push('/employee/detail')"
+            >添加员工</el-button
+          >
           <el-button size="mini" @click="showExcelDialog = true"
             >excel导入</el-button
           >
@@ -57,9 +62,16 @@
           <el-table-column prop="departmentName" label="部门" />
           <el-table-column prop="timeOfEntry" label="入职时间" sortable />
           <el-table-column label="操作" width="280px">
-            <template v-slot="{row}">
-              <el-button size="mini" type="text" @click="$router.push(`/employee/detail/${row.id}`)">查看</el-button>
-              <el-button size="mini" type="text">角色</el-button>
+            <template v-slot="{ row }">
+              <el-button
+                size="mini"
+                type="text"
+                @click="$router.push(`/employee/detail/${row.id}`)"
+                >查看</el-button
+              >
+              <el-button size="mini" type="text" @click="btnRole"
+                >角色</el-button
+              >
               <el-popconfirm
                 title="确认删除该行数据吗？"
                 @onConfirm="confirmDel(row.id)"
@@ -93,13 +105,24 @@
       :show-excel-dialog.sync="showExcelDialog"
       @uploadSuccess="getEmployeeList"
     />
+    <!-- 放置角色弹层-绑定变量和渲染checkbox -->
+    <el-dialog :visible.sync="showRoleDialog" title="分配角色">
+      <!-- 弹层内容 -->
+      <!-- checkbox -->
+      <el-checkbox-group v-model="roleIds">
+        <!-- 放置n个的checkbox  要执行checkbox的存储值 item.id-->
+        <el-checkbox v-for="item in roleList" :key="item.id" :label="item.id">{{
+          item.name
+        }}</el-checkbox>
+      </el-checkbox-group>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { getDepartment } from "@/api/department";
 import { transListToTreeData } from "@/utils";
-import { getEmployeeList, exportEmployee, delEmployee } from "@/api/employee";
+import { getEmployeeList, exportEmployee, delEmployee,getEnableRoleList } from "@/api/employee";
 import FileSaver from "file-saver"; //blob流 下载文件
 import ImportExcel from "./components/import-excel.vue";
 
@@ -125,6 +148,9 @@ export default {
       },
       total: 0, // 记录员工的总数
       list: [], // 员工列表数据
+      showRoleDialog: false, // 用来控制角色弹层的显示
+      roleList: [], // 接收角色列表
+      roleIds: [], // 用来双向绑定数据的
     };
   },
   created() {
@@ -180,11 +206,17 @@ export default {
     },
     // 删除员工方法
     async confirmDel(id) {
-      await delEmployee(id)
-      if (this.list.length === 1 && this.queryParams.page > 1) this.queryParams.page--
-      this.getEmployeeList()
-      this.$message.success('删除员工成功')
-    }
+      await delEmployee(id);
+      if (this.list.length === 1 && this.queryParams.page > 1)
+        this.queryParams.page--;
+      this.getEmployeeList();
+      this.$message.success("删除员工成功");
+    },
+    // 点击角色按钮弹出层
+    async btnRole() {
+      this.showRoleDialog = true;
+      this.roleList = await getEnableRoleList();
+    },
   },
 };
 </script>
