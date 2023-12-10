@@ -115,6 +115,16 @@
           item.name
         }}</el-checkbox>
       </el-checkbox-group>
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button type="primary" size="mini" @click="btnRoleOK"
+            >确定</el-button
+          >
+          <el-button size="mini" @click="showRoleDialog = false"
+            >取消</el-button
+          >
+        </el-col>
+      </el-row>
     </el-dialog>
   </div>
 </template>
@@ -122,7 +132,14 @@
 <script>
 import { getDepartment } from "@/api/department";
 import { transListToTreeData } from "@/utils";
-import { getEmployeeList, exportEmployee, delEmployee,getEnableRoleList,getEmployeeDetail } from "@/api/employee";
+import {
+  getEmployeeList,
+  exportEmployee,
+  delEmployee,
+  getEnableRoleList,
+  getEmployeeDetail,
+  assignRole,
+} from "@/api/employee";
 import FileSaver from "file-saver"; //blob流 下载文件
 import ImportExcel from "./components/import-excel.vue";
 
@@ -151,7 +168,7 @@ export default {
       showRoleDialog: false, // 用来控制角色弹层的显示
       roleList: [], // 接收角色列表
       roleIds: [], // 用来双向绑定数据的
-      currentUserId: null // 用来记录当前点击的用户id
+      currentUserId: null, // 用来记录当前点击的用户id
     };
   },
   created() {
@@ -217,11 +234,19 @@ export default {
     async btnRole(id) {
       this.roleList = await getEnableRoleList();
       // 记录当前点击的id 因为后边 确定取消要存取给对应的用户
-      this.currentUserId = id
-      const { roleIds } = await getEmployeeDetail(id)
-      this.roleIds = roleIds
+      this.currentUserId = id;
+      const { roleIds } = await getEmployeeDetail(id);
+      this.roleIds = roleIds;
       this.showRoleDialog = true; //调整顺序，获取完数据，才进行弹窗显示
-
+    },
+    // 点击角色的确定
+    async btnRoleOK() {
+      await assignRole({
+        id: this.currentUserId,
+        roleIds: this.roleIds,
+      });
+      this.$message.success("分配用户角色成功");
+      this.showRoleDialog = false;
     },
   },
 };
