@@ -69,7 +69,7 @@
                 @click="$router.push(`/employee/detail/${row.id}`)"
                 >查看</el-button
               >
-              <el-button size="mini" type="text" @click="btnRole"
+              <el-button size="mini" type="text" @click="btnRole(row.id)"
                 >角色</el-button
               >
               <el-popconfirm
@@ -122,7 +122,7 @@
 <script>
 import { getDepartment } from "@/api/department";
 import { transListToTreeData } from "@/utils";
-import { getEmployeeList, exportEmployee, delEmployee,getEnableRoleList } from "@/api/employee";
+import { getEmployeeList, exportEmployee, delEmployee,getEnableRoleList,getEmployeeDetail } from "@/api/employee";
 import FileSaver from "file-saver"; //blob流 下载文件
 import ImportExcel from "./components/import-excel.vue";
 
@@ -151,6 +151,7 @@ export default {
       showRoleDialog: false, // 用来控制角色弹层的显示
       roleList: [], // 接收角色列表
       roleIds: [], // 用来双向绑定数据的
+      currentUserId: null // 用来记录当前点击的用户id
     };
   },
   created() {
@@ -213,9 +214,14 @@ export default {
       this.$message.success("删除员工成功");
     },
     // 点击角色按钮弹出层
-    async btnRole() {
-      this.showRoleDialog = true;
+    async btnRole(id) {
       this.roleList = await getEnableRoleList();
+      // 记录当前点击的id 因为后边 确定取消要存取给对应的用户
+      this.currentUserId = id
+      const { roleIds } = await getEmployeeDetail(id)
+      this.roleIds = roleIds
+      this.showRoleDialog = true; //调整顺序，获取完数据，才进行弹窗显示
+
     },
   },
 };
