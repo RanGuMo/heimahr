@@ -29,6 +29,7 @@ const actions = {
   async getUserInfo(context) {
     const userInfo = await getUserInfo()
     context.commit('setUserInfo', userInfo)
+    return userInfo // 返回数据
   },
   //退出登录
   logout(context) {
