@@ -1,8 +1,10 @@
 import { getToken, setToken, removeToken } from "@/utils/auth"
-import { login,getUserInfo } from "@/api/user"
+import { login, getUserInfo } from "@/api/user"
+import { constantRoutes } from '@/router'
 const state = {
   token: getToken(), // 1.从缓存中读取初始值
-  userInfo:{} //存储用户基本信息
+  userInfo: {}, //存储用户基本信息
+  routes: constantRoutes // 静态路由的数组
 }
 const mutations = {
   setToken(state, token) {
@@ -15,6 +17,9 @@ const mutations = {
   removeToken(state) {
     state.token = null  // 3.删除Vuex的token
     removeToken()
+  },
+  setRoutes(state, newRoutes) {
+    state.routes = [...constantRoutes, ...newRoutes] // 静态路由 + 动态路由
   }
 }
 const actions = {
