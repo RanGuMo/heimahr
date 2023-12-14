@@ -30,6 +30,7 @@
             size="mini"
             type="primary"
             @click="$router.push('/employee/detail')"
+            v-permission="'add-employee'"
             >添加员工</el-button
           >
           <el-button size="mini" @click="showExcelDialog = true"
