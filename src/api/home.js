@@ -9,3 +9,13 @@ export function getHomeData() {
     url: '/home/data'
   })
 }
+
+/**
+ * 获取通知消息
+ *
+*/
+export function getMessageList() {
+  return request({
+    url: '/home/notice'
+  })
+}
