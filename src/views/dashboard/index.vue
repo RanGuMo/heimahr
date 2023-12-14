@@ -6,20 +6,21 @@
         <div class="panel">
           <!-- 个人信息 -->
           <div class="user-info">
-            <img class="avatar" src="../../assets/common/defaultHead.png" alt="">
+            <img v-if="avatar" class="avatar" :src="avatar" alt="">
+            <span v-else class="username">{{ name?.charAt(0) }}</span>
             <div class="company-info">
               <div class="title">
                 江苏传智播客教育科技股份有限公司
                 <span>体验版</span>
               </div>
-              <div class="depart">庆山 ｜ 传智播客-总裁办</div>
+              <div class="depart">{{ name }} ｜ {{ company }}-{{ departmentName }}</div>
             </div>
           </div>
           <!-- 代办 -->
           <div class="todo-list">
             <div class="todo-item">
               <span>组织总人数</span>
-              <!-- 起始值 终点值  滚动时间 -->
+              <!-- 起始值 终点值 动画时间 -->
               <count-to
                 :start-val="0"
                 :end-val="228"
@@ -48,7 +49,8 @@
                 :start-val="0"
                 :end-val="890"
                 :duration="1000"
-              />            </div>
+              />
+            </div>
             <div class="todo-item">
               <span>本月待转正</span>
               <count-to
@@ -270,9 +272,14 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     CountTo
+  },
+  // 计算属性
+  computed: {
+    ...mapGetters(['name', 'avatar', 'company', 'departmentName']) // 映射给了计算属性
   }
 }
 </script>
@@ -289,6 +296,7 @@ export default {
  ::v-deep .el-calendar-table__row td,::v-deep .el-calendar-table tr td:first-child, ::v-deep .el-calendar-table__row td.prev{
   border:none;
  }
+
 .date-content {
   height: 40px;
   text-align: center;

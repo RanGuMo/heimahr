@@ -5,6 +5,8 @@ const getters = {
   avatar: state => state.user.userInfo.staffPhoto,//头像
   name: state => state.user.userInfo.username, //用户名称
   userId: state => state.user.userInfo.userId, //添加userId的快捷访问方式，通过是否存在userId来判断vuex中是否存在用户信息，如果不存在就在前置路由守卫中重新获取一次
-  routes: state => state.user.routes
+  routes: state => state.user.routes,
+  company: state => state.user.userInfo.company, // 公司名称
+  departmentName: state => state.user.userInfo.departmentName // 部门名称
 }
 export default getters
