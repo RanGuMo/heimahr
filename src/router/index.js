@@ -88,7 +88,11 @@ export const asyncRoutes = [
   socialRouter]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  // (history模式需要服务器支持，在开发环境下，
+  //有webpack支持，所以hash和history在浏览器后面输入地址都会刷新)
+  // hash 模式地址栏有 # 号，在#号后面输入地址不会跳转，
+  // history 模式，地址栏没有#号，在斜杠后面输入地址会跳转
+  mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes // 默认引入静态路由
 })
