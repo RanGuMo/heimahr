@@ -6,14 +6,16 @@
         <div class="panel">
           <!-- 个人信息 -->
           <div class="user-info">
-            <img v-if="avatar" class="avatar" :src="avatar" alt="">
+            <img v-if="avatar" class="avatar" :src="avatar" alt="" />
             <span v-else class="username">{{ name?.charAt(0) }}</span>
             <div class="company-info">
               <div class="title">
                 江苏传智播客教育科技股份有限公司
                 <span>体验版</span>
               </div>
-              <div class="depart">{{ name }} ｜ {{ company }}-{{ departmentName }}</div>
+              <div class="depart">
+                {{ name }} ｜ {{ company }}-{{ departmentName }}
+              </div>
             </div>
           </div>
           <!-- 代办 -->
@@ -116,7 +118,6 @@
                   :end-val="homeData.socialInsurance?.declarationTotal"
                   :duration="1000"
                 />
-
               </div>
               <div class="info-list">
                 <div class="info-list-item">
@@ -147,6 +148,7 @@
             </div>
             <div class="chart">
               <!-- 图表 -->
+              <div ref="social" style="width: 100%; height: 100%" />
             </div>
           </div>
         </div>
@@ -192,6 +194,7 @@
             </div>
             <div class="chart">
               <!-- 图表 -->
+              <div ref="provident" style="width: 100%; height: 100%" />
             </div>
           </div>
         </div>
@@ -234,8 +237,12 @@
         <div class="panel">
           <div class="panel-title">通知公告</div>
           <div class="information-list">
-            <div v-for="(item,index) in list" :key="index" class="information-list-item">
-              <img :src="item.icon" alt="">
+            <div
+              v-for="(item, index) in list"
+              :key="index"
+              class="information-list-item"
+            >
+              <img :src="item.icon" alt="" />
               <div>
                 <p>
                   {{ item.notice }}
@@ -251,36 +258,95 @@
 </template>
 
 <script>
-import CountTo from 'vue-count-to'
-import { mapGetters } from 'vuex'
-import { getHomeData, getMessageList } from '@/api/home'
+import CountTo from "vue-count-to";
+import { mapGetters } from "vuex";
+import { getHomeData, getMessageList } from "@/api/home";
+import * as echarts from "echarts"; // 引入所有的echarts
 export default {
   components: {
-    CountTo
+    CountTo,
   },
   data() {
     return {
       homeData: {}, // 存放首页数据的对象
-      list: []
-    }
+      list: [],
+    };
   },
   // 计算属性
   computed: {
-    ...mapGetters(['name', 'avatar', 'company', 'departmentName']) // 映射给了计算属性
+    ...mapGetters(["name", "avatar", "company", "departmentName"]), // 映射给了计算属性
   },
+  watch: {
+    homeData() {
+      console.log(this.homeData);
+      // 设置图表
+      this.social.setOption({
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: this.homeData.socialInsurance?.xAxis,
+        },
+        yAxis: {
+          type: "value",
+        },
+        series: [
+          {
+            data: this.homeData.socialInsurance?.yAxis,
+            type: "line",
+            areaStyle: {
+              color: "#04c9be", // 填充颜色
+            },
+            lineStyle: {
+              color: "#04c9be", // 线的颜色
+            },
+          },
+        ],
+      });
+      this.provident.setOption({
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: this.homeData.providentFund?.xAxis,
+        },
+        yAxis: {
+          type: "value",
+        },
+        series: [
+          {
+            data: this.homeData.providentFund?.yAxis,
+            type: "line",
+            areaStyle: {
+              color: "#04c9be", // 填充颜色
+            },
+            lineStyle: {
+              color: "#04c9be", // 线的颜色
+            },
+          },
+        ],
+      });
+    },
+  },
+
   created() {
-    this.getHomeData()
-    this.getMessageList()
+    this.getHomeData();
+    this.getMessageList();
+  },
+  mounted() {
+    // 获取展示的数据 设置给图表
+    // 监听homeData的变化
+    this.social = echarts.init(this.$refs.social); // 初始化echart
+    // data中没有声明 不是响应式
+    this.provident = echarts.init(this.$refs.provident);
   },
   methods: {
     async getHomeData() {
-      this.homeData = await getHomeData()
+      this.homeData = await getHomeData();
     },
     async getMessageList() {
-      this.list = await getMessageList()
-    }
-  }
-}
+      this.list = await getMessageList();
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -290,44 +356,45 @@ export default {
   min-height: calc(100vh - 80px);
 
   ::v-deep .el-calendar-day {
-  height:  40px;
- }
- ::v-deep .el-calendar-table__row td,::v-deep .el-calendar-table tr td:first-child, ::v-deep .el-calendar-table__row td.prev{
-  border:none;
- }
+    height: 40px;
+  }
+  ::v-deep .el-calendar-table__row td,
+  ::v-deep .el-calendar-table tr td:first-child,
+  ::v-deep .el-calendar-table__row td.prev {
+    border: none;
+  }
 
-.date-content {
-  height: 40px;
-  text-align: center;
-  line-height: 40px;
-  font-size: 14px;
-}
-.date-content .rest {
-  color: #fff;
-  border-radius: 50%;
-  background: rgb(250, 124, 77);
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
-  display: inline-block;
-  font-size: 12px;
-  margin-left: 10px;
-}
-.date-content .text{
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
- display: inline-block;
-
-}
-::v-deep .el-calendar-table td.is-selected .text{
-   background: #409eff;
-   color: #fff;
-   border-radius: 50%;
- }
- ::v-deep .el-calendar__header {
-   display: none
- }
+  .date-content {
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 14px;
+  }
+  .date-content .rest {
+    color: #fff;
+    border-radius: 50%;
+    background: rgb(250, 124, 77);
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    display: inline-block;
+    font-size: 12px;
+    margin-left: 10px;
+  }
+  .date-content .text {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    display: inline-block;
+  }
+  ::v-deep .el-calendar-table td.is-selected .text {
+    background: #409eff;
+    color: #fff;
+    border-radius: 50%;
+  }
+  ::v-deep .el-calendar__header {
+    display: none;
+  }
   .container {
     display: flex;
     .right {
@@ -366,16 +433,16 @@ export default {
           line-height: 48px;
           text-align: center;
         }
-         .username {
-           width: 30px;
-           height: 30px;
-           text-align: center;
-           line-height: 30px;
-           border-radius: 50%;
-           background: #04c9be;
-           color: #fff;
-           margin-right: 4px;
-         }
+        .username {
+          width: 30px;
+          height: 30px;
+          text-align: center;
+          line-height: 30px;
+          border-radius: 50%;
+          background: #04c9be;
+          color: #fff;
+          margin-right: 4px;
+        }
         .company-info {
           margin-left: 10px;
           height: 48px;
@@ -445,19 +512,19 @@ export default {
             background: #f5f6f8;
             background-size: cover;
             &.approval {
-              background-image: url('~@/assets/common/approval.png');
+              background-image: url("~@/assets/common/approval.png");
             }
-             &.social {
-              background-image: url('~@/assets/common/social.png');
+            &.social {
+              background-image: url("~@/assets/common/social.png");
             }
-             &.salary {
-              background-image: url('~@/assets/common/salary.png');
+            &.salary {
+              background-image: url("~@/assets/common/salary.png");
             }
             &.role {
-              background-image: url('~@/assets/common/role.png');
+              background-image: url("~@/assets/common/role.png");
             }
-             &.bpm {
-              background-image: url('~@/assets/common/bpm.png');
+            &.bpm {
+              background-image: url("~@/assets/common/bpm.png");
             }
           }
           span {
@@ -471,7 +538,7 @@ export default {
       .chart-container {
         display: flex;
         .chart-info {
-         width: 240px;
+          width: 240px;
           margin-top: 10px;
           .info-main {
             padding: 10px;
@@ -515,7 +582,7 @@ export default {
           }
         }
         .chart {
-          flex:1
+          flex: 1;
         }
       }
       // 帮助链接
@@ -547,13 +614,13 @@ export default {
             i.icon-help {
               background-image: url("~@/assets/common/help.png");
             }
-             i.icon-support {
+            i.icon-support {
               background-image: url("~@/assets/common/support.png");
             }
-             i.icon-add {
+            i.icon-add {
               background-image: url("~@/assets/common/add.png");
             }
-             i.icon-entry {
+            i.icon-entry {
               background-image: url("~@/assets/common/entry.png");
             }
           }
@@ -565,19 +632,19 @@ export default {
         .information-list-item {
           display: flex;
           align-items: center;
-          margin:15px 0;
+          margin: 15px 0;
           img {
             width: 40px;
             height: 40px;
             border: 50%;
           }
-         .col {
-           color: #8a97f8;
-         }
-         div :nth-child(2) {
-          color: #697086;
-          font-size: 14px;
-         }
+          .col {
+            color: #8a97f8;
+          }
+          div :nth-child(2) {
+            color: #697086;
+            font-size: 14px;
+          }
         }
       }
     }
