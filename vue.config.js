@@ -51,6 +51,12 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
+    },
+    // 配置需要排除的包
+    externals: {
+      'vue': 'Vue',
+      'element-ui': 'ELEMENT',
+      'cos-js-sdk-v5': 'COS'
     }
   },
   chainWebpack(config) {
@@ -92,7 +98,7 @@ module.exports = {
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
+              // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
             .end()
