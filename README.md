@@ -1,5 +1,5 @@
-# 黑马人资项目
-> 项目使用vue-admin-template模板，axios，element-ui，vue-router，vuex，vue-cli3.0，webpack，es6，eslint
+# 黑马人资项目              
+> 项目使用vue-admin-template模板，axios，element-ui，scss, vue-router，vuex，vue-cli3.0，webpack，es6，eslint 
 
 
 ## 1.项目启动
