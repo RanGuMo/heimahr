@@ -410,7 +410,7 @@ export default {
 
 ## 11.1. 分析登录流程
 
-![image](../../source/images/README/image.png)
+![image](source/images/README/image.png)
 
 > 传统思路都是登录校验通过之后，直接调用接口，获取token之后，跳转到主页。
 
@@ -515,19 +515,19 @@ export default {
 > 上个小节，完成了Vuex用户模块的创建和持久化管理，现在已经调通了 **登录页面- action，**继续往下需要处理
 > **请求模块-axios封装-跨域-区分环境**
 
-![image.png](../../source/images/README/1677661659053-a46470bb-38f9-4483-b685-d2f0236e57b0.png)
+![image.png](source/images/README/1677661659053-a46470bb-38f9-4483-b685-d2f0236e57b0.png)
 
 > 我们要先把跨域问题解决才能考虑其他内容的开发
 
 - 首先为什么会有跨域？
 
-![image.png](../../source/images/README/1677662325286-e15c499c-44a2-47cc-a1ea-47ce323facaa.png)
+![image.png](source/images/README/1677662325286-e15c499c-44a2-47cc-a1ea-47ce323facaa.png)
 
 > 在后端没有开启cors的情况下，浏览器的同源策略会直接限制后端返回的数据给到前端。这是因为我们目前所有的项目都是前后分离，前端一个服务， 后端一个服务，后端不开cors只能前端自己想办法。
 
 - 代理是怎么解决跨域的？
 
-![image.png](../../source/images/README/1677662514280-7a5ed512-57e7-4de3-825d-d8c352d679ec.png)
+![image.png](source/images/README/1677662514280-7a5ed512-57e7-4de3-825d-d8c352d679ec.png)
 
 > 既然前端不能直接请求后端服务，那就搞个中间服务，中间服务刚好和我们的前端服务同源，前端和中间服务可以通信，而中间服务是node, node后台向后端发请求是不受同源策略影响的，因为**同源策略只针对浏览器！！！**， 这样就是代理，中间层的服务将前端的请求代理给了后端接口。
 
@@ -561,7 +561,7 @@ export default {
 
 > 完成了代理跨域，就可以考虑axios的封装了。
 
-![image.png](../../source/images/README/1677662862226-ebc76111-3217-4661-b28a-c8a9e0dd74f0.png)
+![image.png](source/images/README/1677662862226-ebc76111-3217-4661-b28a-c8a9e0dd74f0.png)
 
 > axios封装主要封装做哪些呢？
 
@@ -569,11 +569,11 @@ export default {
 - 请求拦截器-统一注入token
 - 响应拦截器-解构数据-处理异常
 
-![image.png](../../source/images/README/1677663057762-d0653812-73be-4885-a00c-50eaf3dee4cf.png)
+![image.png](source/images/README/1677663057762-d0653812-73be-4885-a00c-50eaf3dee4cf.png)
 
 - axios的基础功能
 
-![image.png](../../source/images/README/1677663248416-25147092-dcd4-46e1-bae4-1084ac8e73f7.png)
+![image.png](source/images/README/1677663248416-25147092-dcd4-46e1-bae4-1084ac8e73f7.png)
 
 代码位置(src/utils/request.js)
 
@@ -617,11 +617,11 @@ export default service
 
 ## 11. 5.环境区分
 
-![image.png](../../source/images/README/1677667090171-7e569091-0544-49f4-9a22-7195ba55c0a9.png)
-![image.png](../../source/images/README/1677667212785-bfc5de9c-ee4e-4ab8-9ea5-549a137f3c91.png)
-![image.png](../../source/images/README/1677667227525-9d0d6876-080a-4938-a664-ed8e9f50f632.png)
+![image.png](source/images/README/1677667090171-7e569091-0544-49f4-9a22-7195ba55c0a9.png)
+![image.png](source/images/README/1677667212785-bfc5de9c-ee4e-4ab8-9ea5-549a137f3c91.png)
+![image.png](source/images/README/1677667227525-9d0d6876-080a-4938-a664-ed8e9f50f632.png)
 
-![image.png](../../source/images/README/1677667385734-95592eb6-e236-4b05-8e32-8c65df2367cd.png)
+![image.png](source/images/README/1677667385734-95592eb6-e236-4b05-8e32-8c65df2367cd.png)
 
 - 将.env.development中的值改为 /api 作为请求工具的基础地址
 - **process.env.VUE_APP_BASE_API **的表示读取该变量，npm run dev时该变量为 /api,  npm run build:prod时 该变量为 /prod-api
@@ -630,7 +630,7 @@ export default service
 
 > 目前登录功能只剩下红色的部分还需要
 
-![image.png](../../source/images/README/1677724539500-9e9b1f76-4220-4a35-aa55-539cab4e6993.png)
+![image.png](source/images/README/1677724539500-9e9b1f76-4220-4a35-aa55-539cab4e6993.png)
 
 - 首先封装登录的API请求-代码位置(**src/api/user.js**)
 
@@ -701,7 +701,7 @@ export default {
 
 > 当前项目用户是否有权限访问主页，要考虑当前有没有token,  如果有token, 用户还想去登录页，我们可以直接去主页-这个就是免登录功能。有token的情况下，直接到主页。
 
-![image.png](../../source/images/README/1677725185117-bd3bdb5d-9ab0-498d-a8cf-9fabf878054e.png)
+![image.png](source/images/README/1677725185117-bd3bdb5d-9ab0-498d-a8cf-9fabf878054e.png)
 
 - 访问主页-有token放过，没有token跳到登录页
 - 访问登录-有token跳到主页，没有token放过
